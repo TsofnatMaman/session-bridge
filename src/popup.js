@@ -82,7 +82,8 @@ let creatingNew = false;
 let acknowledgedPair = "";
 
 function crossSitePair(project, targetHost) {
-  return project && canSync(project.sourceHost, targetHost) &&
+  return project &&
+    canSync(project.sourceHost, targetHost) &&
     needsCrossSiteWarning(project.sourceHost, targetHost)
     ? `${project.sourceHost}→${targetHost}`
     : "";
@@ -235,10 +236,7 @@ async function refresh({ keepForm = false } = {}) {
   [currentTab] = await chrome.tabs.query({ active: true, currentWindow: true });
   const targetHost = currentHost();
 
-  if (
-    editingProjectId &&
-    !settings.projects.some((project) => project.id === editingProjectId)
-  ) {
+  if (editingProjectId && !settings.projects.some((project) => project.id === editingProjectId)) {
     editingProjectId = "";
   }
   if (!editingProjectId && settings.projects.length > 0 && !keepForm && !creatingNew) {
@@ -274,8 +272,8 @@ async function refresh({ keepForm = false } = {}) {
     : activePersona
       ? `Saved persona ready · ${activePersona.label}`
       : sourceTab
-      ? `Source tab ready · ${project.sourceHost}`
-      : `Open ${project.sourceHost} to sync this project`;
+        ? `Source tab ready · ${project.sourceHost}`
+        : `Open ${project.sourceHost} to sync this project`;
 
   syncOrigins = [
     originPatternFromUrl(currentTab?.url ?? ""),
@@ -296,14 +294,15 @@ async function refresh({ keepForm = false } = {}) {
   if (riskPair) {
     elements.riskAckText.textContent = `I understand the risk and trust ${targetHost} with my ${project.sourceHost} session.`;
   }
-  const accessNote = project && targetHost && targetHost !== project.sourceHost
-    ? describeAccessNote({
-        newAccessHosts,
-        sourceHost: project.sourceHost,
-        targetHost,
-        crossSite: Boolean(riskPair),
-      })
-    : "";
+  const accessNote =
+    project && targetHost && targetHost !== project.sourceHost
+      ? describeAccessNote({
+          newAccessHosts,
+          sourceHost: project.sourceHost,
+          targetHost,
+          crossSite: Boolean(riskPair),
+        })
+      : "";
   elements.accessNote.textContent = accessNote;
   elements.accessNote.hidden = !accessNote;
 
@@ -361,7 +360,10 @@ async function refresh({ keepForm = false } = {}) {
   } else if (!sourceTab && !activePersona) {
     setNotice("Keep the selected project's source tab open, then return here.");
   } else if (riskUnacknowledged) {
-    setNotice("These sites are unrelated. Tick the box above to confirm you trust the destination, then sync.", "error");
+    setNotice(
+      "These sites are unrelated. Tick the box above to confirm you trust the destination, then sync.",
+      "error",
+    );
   } else if (settings.autoSync && !project.targetPattern) {
     setNotice("Manual sync is ready. Add a target pattern before enabling automatic routing.");
   } else {
@@ -421,9 +423,7 @@ elements.riskAckBox.addEventListener(
   "change",
   guarded(async () => {
     const project = projectForId(await getSettings());
-    acknowledgedPair = elements.riskAckBox.checked
-      ? crossSitePair(project, currentHost())
-      : "";
+    acknowledgedPair = elements.riskAckBox.checked ? crossSitePair(project, currentHost()) : "";
     await refresh({ keepForm: true });
   }),
 );
@@ -470,18 +470,22 @@ async function saveProjectFields(fields) {
   const existing = projectForId(settings);
   const project = normalizeProject(fields, existing?.id);
   if (!project) {
-    setNotice("Enter the source site hostname, such as my-project.vercel.app or app.example.com.", "error");
+    setNotice(
+      "Enter the source site hostname, such as my-project.vercel.app or app.example.com.",
+      "error",
+    );
     return false;
   }
   if (fields.targetPattern.trim() && !normalizeTargetPattern(fields.targetPattern)) {
-    setNotice("Use a host pattern with at most one *, such as marketing-*.vercel.app or *.staging.example.com.", "error");
+    setNotice(
+      "Use a host pattern with at most one *, such as marketing-*.vercel.app or *.staging.example.com.",
+      "error",
+    );
     return false;
   }
 
   const projects = existing
-    ? settings.projects.map((candidate) =>
-        candidate.id === project.id ? project : candidate,
-      )
+    ? settings.projects.map((candidate) => (candidate.id === project.id ? project : candidate))
     : [...settings.projects, project];
   creatingNew = false;
   editingProjectId = project.id;
@@ -567,49 +571,52 @@ elements.personaSelect.addEventListener(
   }),
 );
 
-elements.capturePersona.addEventListener("click", guarded(async () => {
-  const granted = await requestSiteAccess(
-    sourceOrigins,
-    "Chrome access to the source site was not granted, so the persona was not saved.",
-  );
-  if (!granted) return;
-  const settings = await getSettings();
-  const project = projectForId(settings);
-  if (!project) return;
-
-  const sourceTab = await findTabForHost(project.sourceHost);
-  if (!sourceTab) {
-    setNotice(`Open ${project.sourceHost} before saving a persona.`, "error");
-    await refresh();
-    return;
-  }
-
-  const label = elements.personaName.value.trim();
-  if (!label) {
-    setNotice("Give this persona a name, such as Admin or Member.", "error");
-    return;
-  }
-
-  elements.capturePersona.disabled = true;
-  setNotice(`Saving “${label}” locally…`);
-  try {
-    const source = await readTabState(sourceTab.id);
-    const persona = await savePersonaSnapshot({
-      projectId: project.id,
-      personaId: elements.personaSelect.value,
-      label,
-      state: source,
-    });
-    await refresh({ keepForm: true });
-    setNotice(
-      `Saved “${persona.label}” with ${persona.cookieCount} cookies and ${persona.storageItemCount} storage items in this Chrome profile.`,
-      "success",
+elements.capturePersona.addEventListener(
+  "click",
+  guarded(async () => {
+    const granted = await requestSiteAccess(
+      sourceOrigins,
+      "Chrome access to the source site was not granted, so the persona was not saved.",
     );
-  } catch (error) {
-    setNotice(`Persona could not be saved: ${errorMessage(error)}`, "error");
-    elements.capturePersona.disabled = false;
-  }
-}));
+    if (!granted) return;
+    const settings = await getSettings();
+    const project = projectForId(settings);
+    if (!project) return;
+
+    const sourceTab = await findTabForHost(project.sourceHost);
+    if (!sourceTab) {
+      setNotice(`Open ${project.sourceHost} before saving a persona.`, "error");
+      await refresh();
+      return;
+    }
+
+    const label = elements.personaName.value.trim();
+    if (!label) {
+      setNotice("Give this persona a name, such as Admin or Member.", "error");
+      return;
+    }
+
+    elements.capturePersona.disabled = true;
+    setNotice(`Saving “${label}” locally…`);
+    try {
+      const source = await readTabState(sourceTab.id);
+      const persona = await savePersonaSnapshot({
+        projectId: project.id,
+        personaId: elements.personaSelect.value,
+        label,
+        state: source,
+      });
+      await refresh({ keepForm: true });
+      setNotice(
+        `Saved “${persona.label}” with ${persona.cookieCount} cookies and ${persona.storageItemCount} storage items in this Chrome profile.`,
+        "success",
+      );
+    } catch (error) {
+      setNotice(`Persona could not be saved: ${errorMessage(error)}`, "error");
+      elements.capturePersona.disabled = false;
+    }
+  }),
+);
 
 elements.deletePersona.addEventListener(
   "click",
@@ -619,7 +626,8 @@ elements.deletePersona.addEventListener(
     const personaId = elements.personaSelect.value;
     if (!project || !personaId) return;
     const label = elements.personaSelect.selectedOptions[0]?.textContent ?? "this persona";
-    if (!window.confirm(`Delete saved persona “${label}”? Its saved session cannot be recovered.`)) return;
+    if (!window.confirm(`Delete saved persona “${label}”? Its saved session cannot be recovered.`))
+      return;
 
     await removePersona(project.id, personaId);
     await refresh({ keepForm: true });
@@ -701,6 +709,4 @@ elements.sync.addEventListener("click", async () => {
   }
 });
 
-refresh().catch((error) =>
-  setNotice(`Could not load settings: ${errorMessage(error)}`, "error"),
-);
+refresh().catch((error) => setNotice(`Could not load settings: ${errorMessage(error)}`, "error"));

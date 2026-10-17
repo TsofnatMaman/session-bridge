@@ -2,8 +2,10 @@ import { normalizeHost, normalizeVercelHost, VERCEL_SUFFIX } from "./urls.js";
 import { normalizeSyncOptions } from "./sync-options.js";
 
 function newProjectId() {
-  return globalThis.crypto?.randomUUID?.() ??
-    `project-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  return (
+    globalThis.crypto?.randomUUID?.() ??
+    `project-${Date.now()}-${Math.random().toString(36).slice(2)}`
+  );
 }
 
 function cleanLabel(value, fallback) {
@@ -35,7 +37,9 @@ export function normalizeTargetPattern(input) {
     labels.length < 2 ||
     labels.at(-1).includes("*") ||
     (wildcards > 0 && fixedTail.length < 2) ||
-    !labels.every((label) => label.length <= 63 && /^[a-z0-9*](?:[a-z0-9*-]*[a-z0-9*])?$/.test(label))
+    !labels.every(
+      (label) => label.length <= 63 && /^[a-z0-9*](?:[a-z0-9*-]*[a-z0-9*])?$/.test(label),
+    )
   ) {
     return "";
   }
@@ -88,9 +92,7 @@ function hostMatchesPattern(host, pattern) {
   const suffix = pattern.slice(star + 1);
   // The wildcard cannot match a negative length, so prefix and suffix must not overlap.
   return (
-    host.length >= prefix.length + suffix.length &&
-    host.startsWith(prefix) &&
-    host.endsWith(suffix)
+    host.length >= prefix.length + suffix.length && host.startsWith(prefix) && host.endsWith(suffix)
   );
 }
 
@@ -106,8 +108,7 @@ export function patternsOverlap(a, b) {
   const suffixes = [a.slice(starA + 1), b.slice(starB + 1)];
   const compatible = ([x, y], test) => test(x, y) || test(y, x);
   return (
-    compatible(prefixes, (x, y) => x.startsWith(y)) &&
-    compatible(suffixes, (x, y) => x.endsWith(y))
+    compatible(prefixes, (x, y) => x.startsWith(y)) && compatible(suffixes, (x, y) => x.endsWith(y))
   );
 }
 
@@ -116,8 +117,7 @@ export function findOverlappingProjects(projects, project) {
   if (!project?.targetPattern) return [];
   return (Array.isArray(projects) ? projects : []).filter(
     (other) =>
-      other.id !== project.id &&
-      patternsOverlap(project.targetPattern, other.targetPattern),
+      other.id !== project.id && patternsOverlap(project.targetPattern, other.targetPattern),
   );
 }
 

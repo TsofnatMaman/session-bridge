@@ -1,8 +1,10 @@
 const VAULT_KEY = "persona-vault-v1";
 
 function newPersonaId() {
-  return globalThis.crypto?.randomUUID?.() ??
-    `persona-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  return (
+    globalThis.crypto?.randomUUID?.() ??
+    `persona-${Date.now()}-${Math.random().toString(36).slice(2)}`
+  );
 }
 
 function cleanLabel(value) {
@@ -40,11 +42,7 @@ function normalizeState(state) {
 }
 
 function normalizePersona(persona) {
-  if (
-    !persona ||
-    typeof persona.id !== "string" ||
-    typeof persona.label !== "string"
-  ) {
+  if (!persona || typeof persona.id !== "string" || typeof persona.label !== "string") {
     return null;
   }
 
@@ -64,9 +62,7 @@ function projectBucket(vault, projectId) {
   const personas = Array.isArray(candidate?.personas)
     ? candidate.personas.map(normalizePersona).filter(Boolean)
     : [];
-  const activePersonaId = personas.some(
-    (persona) => persona.id === candidate?.activePersonaId,
-  )
+  const activePersonaId = personas.some((persona) => persona.id === candidate?.activePersonaId)
     ? candidate.activePersonaId
     : "";
   return { activePersonaId, personas };
@@ -99,8 +95,7 @@ function publicPersona(persona) {
     capturedAt: persona.capturedAt ?? "",
     earliestExpiry: earliestCookieExpiry(persona.state.cookies),
     cookieCount: persona.state.cookies.length,
-    storageItemCount:
-      persona.state.localStorage.length + persona.state.sessionStorage.length,
+    storageItemCount: persona.state.localStorage.length + persona.state.sessionStorage.length,
   };
 }
 
@@ -118,12 +113,8 @@ export async function getPersonaState(projectId) {
 export async function getActivePersona(projectId) {
   const vault = await readVault();
   const bucket = projectBucket(vault, projectId);
-  const persona = bucket.personas.find(
-    (candidate) => candidate.id === bucket.activePersonaId,
-  );
-  return persona
-    ? { ...persona, state: cloneState(persona.state) }
-    : null;
+  const persona = bucket.personas.find((candidate) => candidate.id === bucket.activePersonaId);
+  return persona ? { ...persona, state: cloneState(persona.state) } : null;
 }
 
 export async function setActivePersona(projectId, personaId) {
@@ -138,12 +129,7 @@ export async function setActivePersona(projectId, personaId) {
 }
 
 /** Stores one local-only cookie snapshot; it is never synced by this extension. */
-export async function savePersonaSnapshot({
-  projectId,
-  personaId = "",
-  label,
-  state,
-}) {
+export async function savePersonaSnapshot({ projectId, personaId = "", label, state }) {
   const normalizedLabel = cleanLabel(label);
   if (!normalizedLabel) throw new Error("Give the persona a name first.");
   const normalizedState = normalizeState(state);

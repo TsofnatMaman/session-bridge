@@ -1,9 +1,41 @@
 {
   "name": "session-bridge",
-  "private": true,
   "version": "2.0.0",
+  "description": "Chrome extension that copies a signed-in session (cookies and storage) between sites, with optional saved test personas.",
+  "private": true,
   "type": "module",
+  "license": "MIT",
+  "author": "Tsofnat Maman",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TsofnatMaman/session-bridge.git"
+  },
+  "bugs": {
+    "url": "https://github.com/TsofnatMaman/session-bridge/issues"
+  },
+  "homepage": "https://github.com/TsofnatMaman/session-bridge#readme",
+  "keywords": [
+    "chrome-extension",
+    "manifest-v3",
+    "cookies",
+    "session",
+    "vercel",
+    "developer-tools"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
-    "test": "node --test"
+    "test": "node --test",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check": "npm run lint && npm run format:check && npm test"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.13.0",
+    "globals": "^17.13.0",
+    "prettier": "^3.9.10"
   }
 }

@@ -2,11 +2,7 @@ import { getSettings } from "./core/config.js";
 import { findAutoSyncProject } from "./core/projects.js";
 import { needsCrossSiteWarning, normalizeHost, originPatternFromUrl } from "./core/urls.js";
 import { hasSelectedSyncOption } from "./core/sync-options.js";
-import {
-  findTabForHost,
-  syncStoredState,
-  syncTabState,
-} from "./platform/cookie-store.js";
+import { findTabForHost, syncStoredState, syncTabState } from "./platform/cookie-store.js";
 import {
   forgetAutoSynced,
   markAutoSynced,
@@ -47,8 +43,10 @@ async function syncIfEligible(tabId, tab) {
     if (!persona && !sourceTab) return;
 
     // Automatic sync can never ask for permission; it only works where access was already granted.
-    const origins = [originPatternFromUrl(tab.url), originPatternFromUrl(sourceTab?.url ?? "")]
-      .filter(Boolean);
+    const origins = [
+      originPatternFromUrl(tab.url),
+      originPatternFromUrl(sourceTab?.url ?? ""),
+    ].filter(Boolean);
     if (!(await chrome.permissions.contains({ origins }))) return;
 
     await markAutoSynced(tabId, targetHost);

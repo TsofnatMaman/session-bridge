@@ -15,13 +15,8 @@ globalThis.chrome = {
   },
 };
 
-const {
-  getActivePersona,
-  getPersonaState,
-  removePersona,
-  savePersonaSnapshot,
-  setActivePersona,
-} = await import("../platform/persona-vault.js");
+const { getActivePersona, getPersonaState, removePersona, savePersonaSnapshot, setActivePersona } =
+  await import("../src/platform/persona-vault.js");
 
 test("stores persona browser-state snapshots locally while exposing metadata only", async () => {
   const projectId = "project-personas";

@@ -5,9 +5,7 @@ export function normalizeHost(input) {
   if (!candidate) return "";
 
   try {
-    const url = new URL(
-      candidate.includes("://") ? candidate : `https://${candidate}`,
-    );
+    const url = new URL(candidate.includes("://") ? candidate : `https://${candidate}`);
     if (url.protocol !== "https:" && url.protocol !== "http:") return "";
     return url.hostname.toLowerCase();
   } catch {
@@ -19,10 +17,7 @@ export const VERCEL_SUFFIX = ".vercel.app";
 
 export function isVercelDeploymentHost(host) {
   const normalized = normalizeHost(host);
-  return (
-    normalized.endsWith(VERCEL_SUFFIX) &&
-    normalized.length > VERCEL_SUFFIX.length
-  );
+  return normalized.endsWith(VERCEL_SUFFIX) && normalized.length > VERCEL_SUFFIX.length;
 }
 
 /** Returns the normalized hostname only when it is a *.vercel.app deployment. */
@@ -73,11 +68,37 @@ export function canSync(sourceOrigin, targetOrigin) {
 }
 
 const TWO_LABEL_PUBLIC_SUFFIXES = new Set([
-  "ac.il", "co.il", "gov.il", "net.il", "org.il",
-  "co.uk", "gov.uk", "ltd.uk", "me.uk", "net.uk", "org.uk", "plc.uk",
-  "com.au", "edu.au", "gov.au", "net.au", "org.au",
-  "com.br", "com.cn", "com.hk", "com.mx", "com.my", "com.sg", "co.jp",
-  "co.kr", "co.nz", "co.za", "com.tr", "com.tw", "com.ar", "com.co",
+  "ac.il",
+  "co.il",
+  "gov.il",
+  "net.il",
+  "org.il",
+  "co.uk",
+  "gov.uk",
+  "ltd.uk",
+  "me.uk",
+  "net.uk",
+  "org.uk",
+  "plc.uk",
+  "com.au",
+  "edu.au",
+  "gov.au",
+  "net.au",
+  "org.au",
+  "com.br",
+  "com.cn",
+  "com.hk",
+  "com.mx",
+  "com.my",
+  "com.sg",
+  "co.jp",
+  "co.kr",
+  "co.nz",
+  "co.za",
+  "com.tr",
+  "com.tw",
+  "com.ar",
+  "com.co",
 ]);
 
 /** Dependency-free registrable-domain approximation, used only to warn before risky copies. */
@@ -88,9 +109,7 @@ export function baseDomain(hostOrUrl) {
   const labels = host.split(".");
   if (labels.length <= 2) return host;
   const lastTwo = labels.slice(-2).join(".");
-  return TWO_LABEL_PUBLIC_SUFFIXES.has(lastTwo)
-    ? labels.slice(-3).join(".")
-    : lastTwo;
+  return TWO_LABEL_PUBLIC_SUFFIXES.has(lastTwo) ? labels.slice(-3).join(".") : lastTwo;
 }
 
 /**

@@ -12,7 +12,7 @@ import {
   normalizeVercelHost,
   originPatternFromUrl,
   supportsCookieDomain,
-} from "../core/urls.js";
+} from "../src/core/urls.js";
 
 test("normalizes host input without retaining paths or casing", () => {
   assert.equal(normalizeHost("HTTPS://App.Example.com/settings?x=1"), "app.example.com");
@@ -31,7 +31,10 @@ test("recognizes Vercel deployment hosts only", () => {
   assert.equal(isVercelDeploymentHost("my-project-git-main-team.vercel.app"), true);
   assert.equal(isVercelDeploymentHost("vercel.app"), false);
   assert.equal(isVercelDeploymentHost("preview.example.com"), false);
-  assert.equal(normalizeVercelHost("https://Source-Project.vercel.app/path"), "source-project.vercel.app");
+  assert.equal(
+    normalizeVercelHost("https://Source-Project.vercel.app/path"),
+    "source-project.vercel.app",
+  );
   assert.equal(normalizeVercelHost("app.example.com"), "");
 });
 

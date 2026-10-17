@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+
+# Build and packaging output
+dist/
+*.zip
+*.crx
+*.pem
+
+# Logs and coverage
+*.log
+coverage/
+
+# Editors and OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Local environment
+.env
+.env.*

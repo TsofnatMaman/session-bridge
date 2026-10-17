@@ -20,7 +20,7 @@ function normalizeProjects(value) {
 function resolveActiveProjectId(projects, requestedId) {
   return projects.some((project) => project.id === requestedId)
     ? requestedId
-    : projects[0]?.id ?? "";
+    : (projects[0]?.id ?? "");
 }
 
 export async function getSettings() {

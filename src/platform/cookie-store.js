@@ -4,9 +4,7 @@ import { cookieSiteFromUrl, normalizeHost, supportsCookieDomain } from "../core/
 function hostMatchesCookieDomain(host, domain) {
   const cookieDomain = domain.replace(/^\./, "").toLowerCase();
   const normalizedHost = host.toLowerCase();
-  return (
-    normalizedHost === cookieDomain || normalizedHost.endsWith(`.${cookieDomain}`)
-  );
+  return normalizedHost === cookieDomain || normalizedHost.endsWith(`.${cookieDomain}`);
 }
 
 function cookieIdentity(cookie) {
@@ -64,9 +62,7 @@ async function withDebugger(tabId, operation) {
   const target = { tabId };
   await chrome.debugger.attach(target, "1.3");
   try {
-    return await operation((method, params) =>
-      chrome.debugger.sendCommand(target, method, params),
-    );
+    return await operation((method, params) => chrome.debugger.sendCommand(target, method, params));
   } finally {
     await chrome.debugger.detach(target).catch(() => {});
   }
@@ -95,9 +91,7 @@ function protocolCookieToCookie(cookie) {
 }
 
 async function readWithDevToolsProtocol(tabId, url) {
-  const { cookies = [] } = await withDebugger(tabId, (send) =>
-    send("Network.getAllCookies"),
-  );
+  const { cookies = [] } = await withDebugger(tabId, (send) => send("Network.getAllCookies"));
   return cookies
     .map(protocolCookieToCookie)
     .filter((cookie) => hostMatchesCookieDomain(url.hostname, cookie.domain));
@@ -163,9 +157,10 @@ export async function readTabState(tabId, syncOptions) {
   const cookies = options.cookies
     ? await readTabCookies(tabId)
     : { cookies: [], transport: "cookies" };
-  const storage = options.localStorage || options.sessionStorage
-    ? await readTabStorage(tabId)
-    : emptyStorageSnapshot();
+  const storage =
+    options.localStorage || options.sessionStorage
+      ? await readTabStorage(tabId)
+      : emptyStorageSnapshot();
   return {
     cookies: cookies.cookies,
     cookieTransport: cookies.transport,
@@ -221,8 +216,7 @@ function targetProtocolCookie(cookie, targetUrl) {
     httpOnly: cookie.httpOnly,
   };
 
-  const sameSite =
-    { strict: "Strict", lax: "Lax", no_restriction: "None" }[cookie.sameSite];
+  const sameSite = { strict: "Strict", lax: "Lax", no_restriction: "None" }[cookie.sameSite];
   if (sameSite) details.sameSite = sameSite;
   if (cookie.priority) details.priority = cookie.priority;
   if (!cookie.session && Number.isFinite(cookie.expirationDate)) {
@@ -258,10 +252,7 @@ async function copyWithDevToolsProtocol(cookies, target) {
     let failed = 0;
     for (const cookie of cookies) {
       try {
-        const result = await send(
-          "Network.setCookie",
-          targetProtocolCookie(cookie, target.url),
-        );
+        const result = await send("Network.setCookie", targetProtocolCookie(cookie, target.url));
         if (result?.success === false) failed += 1;
         else copied += 1;
       } catch {
@@ -277,9 +268,10 @@ async function copyStoredCookies(cookies, transport, targetTabId) {
     return { copied: 0, failed: 0, sourceCount: 0 };
   }
   const target = await getTabContext(targetTabId);
-  const result = transport === "devtools-protocol"
-    ? await copyWithDevToolsProtocol(cookies, target)
-    : await copyWithCookiesApi(cookies, target);
+  const result =
+    transport === "devtools-protocol"
+      ? await copyWithDevToolsProtocol(cookies, target)
+      : await copyWithCookiesApi(cookies, target);
   return { ...result, sourceCount: cookies.length };
 }
 
@@ -310,10 +302,12 @@ async function writeTabStorage(tabId, state, options) {
       };
     },
   });
-  return injection?.result ?? {
-    localStorageCopied: 0,
-    sessionStorageCopied: 0,
-  };
+  return (
+    injection?.result ?? {
+      localStorageCopied: 0,
+      sessionStorageCopied: 0,
+    }
+  );
 }
 
 /**
@@ -335,11 +329,7 @@ export async function syncStoredState(state, targetTabId, syncOptions) {
   };
 
   if (options.cookies) {
-    const cookies = await copyStoredCookies(
-      source.cookies,
-      source.cookieTransport,
-      targetTabId,
-    );
+    const cookies = await copyStoredCookies(source.cookies, source.cookieTransport, targetTabId);
     result.cookies = { copied: cookies.copied, failed: cookies.failed };
     result.copied += cookies.copied;
     result.failed += cookies.failed;
@@ -349,12 +339,8 @@ export async function syncStoredState(state, targetTabId, syncOptions) {
 
   if (options.localStorage || options.sessionStorage) {
     const storage = await writeTabStorage(targetTabId, source, options);
-    const localSourceCount = options.localStorage
-      ? (source.localStorage?.length ?? 0)
-      : 0;
-    const sessionSourceCount = options.sessionStorage
-      ? (source.sessionStorage?.length ?? 0)
-      : 0;
+    const localSourceCount = options.localStorage ? (source.localStorage?.length ?? 0) : 0;
+    const sessionSourceCount = options.sessionStorage ? (source.sessionStorage?.length ?? 0) : 0;
     result.localStorage = { copied: storage.localStorageCopied };
     result.sessionStorage = { copied: storage.sessionStorageCopied };
     result.copied += storage.localStorageCopied + storage.sessionStorageCopied;

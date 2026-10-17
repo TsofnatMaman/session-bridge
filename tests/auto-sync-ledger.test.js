@@ -15,9 +15,8 @@ globalThis.chrome = {
   },
 };
 
-const { forgetAutoSynced, markAutoSynced, wasAutoSynced, wasSessionApplied } = await import(
-  "../platform/auto-sync-ledger.js"
-);
+const { forgetAutoSynced, markAutoSynced, wasAutoSynced, wasSessionApplied } =
+  await import("../src/platform/auto-sync-ledger.js");
 
 test("a tab is auto-synced once per deployment host", async () => {
   assert.equal(await wasAutoSynced(7, "app-git-x.vercel.app"), false);

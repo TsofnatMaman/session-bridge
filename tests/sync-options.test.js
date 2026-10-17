@@ -6,15 +6,11 @@ import {
   hasSelectedSyncOption,
   normalizeSyncOptions,
   selectedSyncLabels,
-} from "../core/sync-options.js";
+} from "../src/core/sync-options.js";
 
 test("uses all supported browser-state types by default", () => {
   assert.deepEqual(normalizeSyncOptions(undefined), DEFAULT_SYNC_OPTIONS);
-  assert.deepEqual(selectedSyncLabels(undefined), [
-    "Cookies",
-    "Local Storage",
-    "Session Storage",
-  ]);
+  assert.deepEqual(selectedSyncLabels(undefined), ["Cookies", "Local Storage", "Session Storage"]);
 });
 
 test("preserves an explicit per-project data selection", () => {

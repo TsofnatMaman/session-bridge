@@ -9,7 +9,7 @@ import {
   normalizeProject,
   normalizeTargetPattern,
   projectMatchesDeployment,
-} from "../core/projects.js";
+} from "../src/core/projects.js";
 
 test("normalizes a Vercel-only automatic target pattern", () => {
   assert.equal(
@@ -25,10 +25,7 @@ test("normalizes a Vercel-only automatic target pattern", () => {
 });
 
 test("suggests a target pattern from the source deployment name", () => {
-  assert.equal(
-    defaultTargetPattern("https://my-app.vercel.app"),
-    "my-app-*.vercel.app",
-  );
+  assert.equal(defaultTargetPattern("https://my-app.vercel.app"), "my-app-*.vercel.app");
   assert.equal(defaultTargetPattern("not-vercel.example.com"), "");
 });
 
@@ -55,7 +52,10 @@ test("normalizes a project only when its source is a valid http(s) host", () => 
     },
   );
   assert.equal(normalizeProject({ sourceHost: "not a host" }, "bad"), null);
-  assert.equal(normalizeProject({ sourceHost: "https://App.Example.com/x" }, "ok").sourceHost, "app.example.com");
+  assert.equal(
+    normalizeProject({ sourceHost: "https://App.Example.com/x" }, "ok").sourceHost,
+    "app.example.com",
+  );
 });
 
 test("automatic routing honors the pattern and refuses ambiguity", () => {
@@ -77,7 +77,10 @@ test("automatic routing honors the pattern and refuses ambiguity", () => {
     dashboard,
   );
   assert.equal(
-    findAutoSyncProject([marketing, { ...dashboard, targetPattern: "marketing-*.vercel.app" }], "marketing-pr-17.vercel.app"),
+    findAutoSyncProject(
+      [marketing, { ...dashboard, targetPattern: "marketing-*.vercel.app" }],
+      "marketing-pr-17.vercel.app",
+    ),
     null,
   );
 });
@@ -100,6 +103,9 @@ test("detects automatic target patterns that could match the same deployment", (
     { id: "b", targetPattern: "shop-git-*.vercel.app" },
     { id: "c", targetPattern: "" },
   ];
-  assert.deepEqual(findOverlappingProjects(projects, projects[0]).map((p) => p.id), ["b"]);
+  assert.deepEqual(
+    findOverlappingProjects(projects, projects[0]).map((p) => p.id),
+    ["b"],
+  );
   assert.deepEqual(findOverlappingProjects(projects, projects[2]), []);
 });

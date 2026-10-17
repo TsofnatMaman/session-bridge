@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { describeAccessNote, describeSyncResult } from "../core/sync-summary.js";
+import { describeAccessNote, describeSyncResult } from "../src/core/sync-summary.js";
 
 const base = {
   copied: 0,

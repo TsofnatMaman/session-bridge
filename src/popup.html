@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Session Bridge</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main>
+      <header class="brand">
+        <div class="mark">⇄</div>
+        <div>
+          <h1>Session Bridge</h1>
+          <p class="eyebrow">Copy a signed-in session between sites</p>
+        </div>
+      </header>
+
+      <section class="card" aria-labelledby="sync-title">
+        <div class="card-head">
+          <h2 id="sync-title">Sync</h2>
+          <span class="tag">Project</span>
+        </div>
+        <button id="quickStart" class="sync" hidden>Use this site as the source</button>
+        <div id="projectPicker">
+          <label for="projectSelect">Project</label>
+          <select id="projectSelect" aria-label="Saved project"></select>
+        </div>
+
+        <div id="syncBody">
+          <div class="route">
+            <span class="route-label">From</span>
+            <div>
+              <div id="sourceState" class="state">Checking configuration…</div>
+              <button id="openSource" class="secondary" hidden>
+                Open source site in a new tab
+              </button>
+            </div>
+            <span class="route-label">To</span>
+            <div id="targetState" class="state">Checking current tab…</div>
+          </div>
+
+          <label for="personaSelect">Session to copy</label>
+          <select id="personaSelect" aria-label="Session to copy"></select>
+
+          <div id="syncPlan" class="sync-plan">Loading sync plan…</div>
+          <p id="accessNote" class="access-note" hidden></p>
+          <label id="riskAck" class="risk-ack" hidden>
+            <input id="riskAckBox" type="checkbox" />
+            <span id="riskAckText"></span>
+          </label>
+          <button id="sync" class="sync">Sync to this site</button>
+        </div>
+        <div id="notice" class="notice" role="status">Loading…</div>
+      </section>
+
+      <details id="setupPanel" class="panel">
+        <summary>Project setup <span id="setupHint">Source · name · pattern</span></summary>
+        <div class="panel-content">
+          <label for="projectName">Project name</label>
+          <input
+            id="projectName"
+            type="text"
+            placeholder="Marketing site"
+            maxlength="60"
+            spellcheck="false"
+          />
+          <label for="sourceHost">Source site</label>
+          <input
+            id="sourceHost"
+            type="text"
+            inputmode="url"
+            placeholder="my-project.vercel.app or app.example.com"
+            spellcheck="false"
+          />
+          <button id="useCurrent" class="secondary">Use current tab as source</button>
+          <label for="targetPattern"
+            >Automatic target pattern <span class="tag">Optional</span></label
+          >
+          <input
+            id="targetPattern"
+            type="text"
+            placeholder="my-app-*.vercel.app"
+            maxlength="75"
+            spellcheck="false"
+          />
+          <button id="saveProject" class="sync-secondary">Save project</button>
+          <div class="button-row">
+            <button id="addProject" class="secondary">New project</button>
+            <button id="deleteProject" class="secondary danger">Delete project</button>
+          </div>
+        </div>
+      </details>
+
+      <details id="copyPanel" class="panel">
+        <summary>What to copy <span id="copyHint">Saved per project</span></summary>
+        <div class="panel-content">
+          <p class="copy-intro">All three are selected by default. Choose at least one type.</p>
+          <div class="copy-list">
+            <label class="copy-option">
+              <input id="copyCookies" type="checkbox" checked />
+              <span
+                ><strong>Cookies</strong
+                ><span>Signed-in sessions and server-set preferences.</span></span
+              >
+            </label>
+            <label class="copy-option">
+              <input id="copyLocalStorage" type="checkbox" checked />
+              <span
+                ><strong>Local Storage</strong
+                ><span>Persistent browser data for the site.</span></span
+              >
+            </label>
+            <label class="copy-option">
+              <input id="copySessionStorage" type="checkbox" checked />
+              <span
+                ><strong>Session Storage</strong
+                ><span>Temporary data in the current tab.</span></span
+              >
+            </label>
+          </div>
+          <p id="copyState" class="panel-note">Save a project to choose its sync contents.</p>
+        </div>
+      </details>
+
+      <details id="personaPanel" class="panel">
+        <summary>
+          Saved sessions (personas) <span id="personaHint">Optional · local only</span>
+        </summary>
+        <div class="panel-content">
+          <p class="panel-intro">
+            Save a signed-in session once, then pick it under “Session to copy” to switch test users
+            without signing in again.
+          </p>
+          <label for="personaName">Persona name</label>
+          <input
+            id="personaName"
+            type="text"
+            placeholder="For example: Admin"
+            maxlength="60"
+            spellcheck="false"
+          />
+          <div class="button-row">
+            <button id="capturePersona" class="secondary">Save / update session</button>
+            <button id="deletePersona" class="secondary danger">Delete persona</button>
+          </div>
+          <p id="personaState" class="panel-note">
+            Choose Live source session, enter a name, and save to add a persona.
+          </p>
+        </div>
+      </details>
+
+      <details class="panel">
+        <summary>Automation <span>All projects</span></summary>
+        <div class="panel-content">
+          <div class="switch-row first">
+            <div class="switch-copy">
+              <strong>Auto-sync new tabs (all projects)</strong>
+              <span
+                >Syncs once per tab when it opens a site matching exactly one project’s pattern (on
+                sites you already allowed)</span
+              >
+            </div>
+            <input
+              id="autoSync"
+              type="checkbox"
+              aria-label="Automatically sync new tabs that match a project pattern"
+            />
+          </div>
+        </div>
+      </details>
+
+      <footer>
+        <p>
+          <b>Privacy:</b> cookie and storage values stay in this Chrome profile and are never
+          displayed by the extension.
+        </p>
+        <p>
+          <b>Source code:</b>
+          <a href="https://github.com/TsofnatMaman/session-bridge" target="_blank" rel="noreferrer"
+            >github.com/TsofnatMaman/session-bridge</a
+          >
+        </p>
+        <p>
+          <b>Created by:</b>
+          <a href="https://github.com/TsofnatMaman" target="_blank" rel="noreferrer"
+            >github.com/TsofnatMaman</a
+          >
+        </p>
+      </footer>
+    </main>
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>
