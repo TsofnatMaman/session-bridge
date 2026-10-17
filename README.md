@@ -105,12 +105,13 @@ npm ci
 npm run check   # lint + format check + tests
 ```
 
-| Script                 | Purpose                    |
-| ---------------------- | -------------------------- |
-| `npm test`             | Unit tests (`node --test`) |
-| `npm run lint`         | ESLint                     |
-| `npm run format`       | Format with Prettier       |
-| `npm run format:check` | Verify formatting          |
+| Script                 | Purpose                                        |
+| ---------------------- | ---------------------------------------------- |
+| `npm test`             | Unit tests (`node --test`)                     |
+| `npm run lint`         | ESLint                                         |
+| `npm run format`       | Format with Prettier                           |
+| `npm run format:check` | Verify formatting                              |
+| `npm run build:icons`  | Regenerate PNG icons from `src/icons/icon.svg` |
 
 ### Project structure
 
@@ -119,6 +120,7 @@ src/                     The unpacked extension (load this folder in Chrome)
   manifest.json
   background.js          Guarded auto-sync workflow
   popup.html|css|js      Onboarding and manual-sync UI
+  icons/                 icon.svg is the single source for the popup and toolbar icons
   core/                  Pure, browser-independent logic
     urls.js              Host validation, permission patterns, cross-site safeguards
     projects.js          Project validation and auto-routing rules
@@ -130,6 +132,7 @@ src/                     The unpacked extension (load this folder in Chrome)
     persona-vault.js     Local-only persona storage
     auto-sync-ledger.js  Per-tab record of automatic syncs
 tests/                   Unit tests for the core and storage modules
+scripts/                 Maintenance scripts (build-icons.js renders the PNG icons)
 ```
 
 `core/` has no dependency on Chrome APIs, so it is covered by unit tests. The `platform/` adapters,

@@ -28,6 +28,7 @@ Commit messages follow [Conventional Commits](https://www.conventionalcommits.or
 
 - Keep browser-independent logic in `src/core/` and Chrome API calls in `src/platform/`, popup or
   background code. Logic in `core/` must be covered by unit tests.
+- The icon lives in one place, `src/icons/icon.svg`; the popup uses it directly. After editing it, run `npm run build:icons` and commit the regenerated PNGs.
 - Never log, display or transmit cookie or storage values.
 - Request the minimum permissions; new permissions need a justification in the pull request and an
   entry in the README permissions table.

@@ -41,17 +41,10 @@ main {
   margin-bottom: 22px;
 }
 .mark {
-  display: grid;
   width: 35px;
   height: 35px;
-  place-items: center;
-  border: 1px solid rgba(156, 242, 204, 0.58);
-  border-radius: 11px;
-  color: var(--accent);
-  background: linear-gradient(140deg, rgba(156, 242, 204, 0.18), rgba(155, 140, 255, 0.18));
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
-  font-size: 18px;
-  font-weight: 800;
+  flex: none;
+  filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.28));
 }
 h1 {
   margin: 0;
