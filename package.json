@@ -1,7 +1,7 @@
 {
   "name": "session-bridge",
   "version": "2.0.0",
-  "description": "Chrome extension that copies a signed-in session (cookies and storage) between sites, with optional saved test personas.",
+  "description": "Chrome extension for testing multi-user apps and Vercel deployments: saved test personas and one-click session copying.",
   "private": true,
   "type": "module",
   "license": "MIT",
@@ -17,9 +17,12 @@
   "keywords": [
     "chrome-extension",
     "manifest-v3",
-    "cookies",
-    "session",
     "vercel",
+    "testing",
+    "multi-tenant",
+    "multi-user",
+    "session",
+    "cookies",
     "developer-tools"
   ],
   "engines": {

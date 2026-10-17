@@ -3,25 +3,44 @@
 [![CI](https://github.com/TsofnatMaman/session-bridge/actions/workflows/ci.yml/badge.svg)](https://github.com/TsofnatMaman/session-bridge/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-A Chrome extension (Manifest V3) that copies a signed-in browser session — cookies, Local Storage and
-Session Storage — from one site to another. Use it to test Vercel previews, `localhost`, or any other
-environment with the same signed-in state as your source site, without logging in again.
+A Chrome extension (Manifest V3) for developers who test apps that require sign-in. It has two main
+purposes:
 
-It has no backend, no accounts and no network access of its own. It is independent of your
-framework, database and authentication provider.
+1. **Test multi-user and multi-tenant systems easily.** Save the signed-in sessions of several users
+   (for example an admin, a member and a user from another tenant) and switch between them in one
+   click, without logging in and out.
+2. **Test Vercel deployments without logging in again.** Copy your signed-in session from one
+   deployment to another (production → preview, preview → preview) so every new deployment is
+   immediately usable.
+
+It also works with `localhost` and any other http(s) site. It has no backend, no accounts and no
+network access of its own, and it is independent of your framework, database and authentication
+provider.
 
 ## Features
 
+### Multi-user testing (personas)
+
+- **Test personas**: save named, local-only snapshots of a signed-in session (`Admin`, `Member`,
+  `Tenant B owner`, …) per project and apply any of them later, without keeping the source tab open.
+- Each persona shows when it was captured and when its earliest cookie expires, so you know when to
+  refresh it.
+
+### Vercel deployments
+
+- **Copy a session to any deployment**: open a preview and sync from your source deployment (or from
+  a saved persona) in one click.
+- **Auto-sync** for new tabs whose host matches exactly one project's pattern (for example
+  `my-app-*.vercel.app`). It runs once per tab and only on sites you already granted access to.
+- **Projects**: save several source sites and switch between them before each sync.
+
+### General
+
 - **Any http(s) site** as source or destination: Vercel previews, `localhost` / `127.0.0.1`, staging
   and production domains.
-- **Projects**: save several source sites and switch between them before each sync.
 - **Choose what to copy** per project: cookies, Local Storage, Session Storage (all by default).
   `HttpOnly` and partitioned cookies are included when Chrome allows it; path, expiry, `Secure`,
   `SameSite` and partition data are preserved.
-- **Auto-sync** for new tabs whose host matches exactly one project's pattern (for example
-  `my-app-*.vercel.app`). It runs once per tab and only on sites you already granted access to.
-- **Test personas**: save named, local-only snapshots of a signed-in session (`Admin`, `Member`, …)
-  and apply them later without keeping the source tab open.
 - **Safety checks**: syncing between unrelated sites stays disabled until you acknowledge that the
   destination will receive the source's session. Values are never displayed or sent anywhere.
 
@@ -45,7 +64,7 @@ The extension is not on the Chrome Web Store yet. To load it from source:
 The destination tab reloads after a successful sync. If part of the sync fails, the popup stays open
 and lists what was skipped.
 
-### Test personas
+### Switching between test users
 
 Sign in as a user in the source tab, open **Saved test personas**, keep **Live source session**
 selected, enter a name and click **Save new persona**. Select a saved persona to sync it without the
