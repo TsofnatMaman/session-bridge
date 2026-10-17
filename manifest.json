@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "Session Bridge",
+  "version": "2.0.0",
+  "description": "Copy a signed-in session (cookies and storage) between sites - Vercel previews, localhost or any other site - with optional saved test personas.",
+  "permissions": ["tabs", "storage", "cookies", "debugger", "scripting", "unlimitedStorage"],
+  "host_permissions": ["https://*.vercel.app/*"],
+  "optional_host_permissions": ["https://*/*", "http://*/*"],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Session Bridge"
+  }
+}
